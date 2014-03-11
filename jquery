@@ -1,0 +1,56 @@
+#! /usr/bin/env coffee
+
+http = require("http");
+argv = require('argv');
+fs   = require('fs')
+
+class JQuery
+  baseUrl: "http://code.jquery.com/"
+  version: null
+  minified: true
+
+  constructor: ()->
+
+  getUrl: ->
+    url = "#{@baseUrl}jquery"
+    url = "#{url}-#{@version}" if @version 
+    url = "#{url}.min" if @minified 
+    url = "#{url}.js"
+
+  get: ->
+    console.log @getUrl()
+    return 
+    url = "http://google.jp";
+    #send request
+    req = http.get url,(res)->
+      res.setEncoding('utf8')
+      res.on "data",(str)->
+        console.log str
+    req.on "error",(err)->
+      console.log("Error:#{err.message}")
+
+
+argv.option
+  name: "jquery",
+  short: 'j'
+  type: "string"
+  description: 'jQueryの有効なバージョン番号'
+#  example: "例示"
+argv.option
+  name: "dev",
+  short: 'd'
+  type: "bool"
+  description: '開発版かmini版か'
+argv = argv.run();
+
+console.log(argv)
+
+$jq = new JQuery;
+$jq.version = argv.options.jquery ? null
+$jq.minified = if argv.options.dev then false else true
+$jq.get();
+
+process.exit()
+
+
+
